@@ -3,32 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Counting</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <title>Traffic Counting App</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 </head>
 <body>
-    <div class="header">
-        <img src="logo.png" alt="Logo" class="logo" onclick="playBirdSound()">
-        <audio id="birdSound" src="burung.mp3"></audio>
-    </div>
-    <div class="container">
-        <div class="counter-buttons">
-            <button class="btn" onclick="incrementCount('motor')">Motor</button>
-            <button class="btn" onclick="incrementCount('mobil')">Mobil</button>
-            <button class="btn" onclick="incrementCount('angkutanUmum')">Angkutan Umum</button>
-            <button class="btn" onclick="incrementCount('bus')">Bus</button>
-            <button class="btn" onclick="incrementCount('pickup')">Pickup</button>
-            <button class="btn" onclick="incrementCount('trukBesar')">Truk Besar</button>
-        </div>
-        <div class="chart-container">
-            <canvas id="trafficChart"></canvas>
-        </div>
-        <button class="btn" onclick="exportToExcel()">Export to Excel</button>
-        <button class="btn" onclick="exportChartToPNG()">Export Chart to PNG</button>
-    </div>
+    <header>
+        <h1>Traffic Counting App</h1>
+        <img src="logo.png" alt="Logo" id="logo" onclick="playBirdSound()">
+    </header>
+    
+    <main>
+        <button onclick="incrementCount('motor')">Motor</button>
+        <button onclick="incrementCount('mobil')">Mobil</button>
+        <button onclick="incrementCount('angkutanUmum')">Angkutan Umum</button>
+        <button onclick="incrementCount('bus')">Bus</button>
+        <button onclick="incrementCount('pickup')">Pickup</button>
+        <button onclick="incrementCount('trukBesar')">Truk Besar</button>
+
+        <canvas id="trafficChart" width="400" height="200"></canvas>
+
+        <button onclick="exportToExcel()">Export to Excel</button>
+        <button onclick="exportChartAsPNG()">Export Chart as PNG</button>
+    </main>
+
+    <audio id="birdSound" src="bird-sound.mp3" preload="auto"></audio>
+    
     <script src="script.js"></script>
 </body>
 </html>
