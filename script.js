@@ -1,4 +1,5 @@
-let countData = {
+// Inisialisasi variabel untuk menghitung jumlah kendaraan
+let counts = {
     motor: 0,
     mobil: 0,
     angkutanUmum: 0,
@@ -7,111 +8,97 @@ let countData = {
     trukBesar: 0
 };
 
-let lastClicked = 0;
+// Variabel untuk debounce
+let lastClickTime = 0;
+const debounceTime = 300; // waktu dalam milidetik
 
+// Fungsi untuk meningkatkan jumlah kendaraan dengan debounce
 function incrementCount(type) {
-    const now = Date.now();
-    if (now - lastClicked < 300) { // 300 ms delay
-        return; // Jangan lakukan apa-apa jika diklik terlalu cepat
+    const currentTime = Date.now();
+    if (currentTime - lastClickTime >= debounceTime) {
+        counts[type]++;
+        lastClickTime = currentTime; // update waktu klik terakhir
+        updateChart(); // Memperbarui grafik setelah menghitung
     }
-    lastClicked = now;
-
-    countData[type]++;
-    updateChart();
-    animateCount(type); // Panggil fungsi animasi
 }
 
-const ctx = document.getElementById('trafficChart').getContext('2d');
-const trafficChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
+// Fungsi untuk memperbarui grafik
+function updateChart() {
+    const ctx = document.getElementById('trafficChart').getContext('2d');
+    const data = {
         labels: ['Motor', 'Mobil', 'Angkutan Umum', 'Bus', 'Pickup', 'Truk Besar'],
         datasets: [{
             label: 'Jumlah Kendaraan',
-            data: [
-                countData.motor, 
-                countData.mobil, 
-                countData.angkutanUmum, 
-                countData.bus, 
-                countData.pickup, 
-                countData.trukBesar
-            ],
-            backgroundColor: [
-                '#ffc107', '#007bff', '#28a745', '#dc3545', '#17a2b8', '#6c757d'
-            ],
-            datalabels: {
-                anchor: 'end',
-                align: 'end',
-                formatter: (value) => value, // Menampilkan nilai
-                color: '#fff', // Warna teks
-                font: {
-                    weight: 'bold',
-                },
-            },
+            data: [counts.motor, counts.mobil, counts.angkutanUmum, counts.bus, counts.pickup, counts.trukBesar],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+            borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+            borderWidth: 1,
         }]
-    },
-    options: {
-        plugins: {
-            datalabels: {
-                display: true,
+    };
+
+    // Jika chart sudah ada, hapus sebelum mengganti dengan yang baru
+    if (window.trafficChart) {
+        window.trafficChart.destroy();
+    }
+
+    // Buat grafik baru
+    window.trafficChart = new Chart(ctx, {
+        type: 'bar', // Jenis grafik bisa diubah sesuai kebutuhan
+        data: data,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             },
-        },
-        scales: {
-            y: {
-                beginAtZero: true
+            plugins: {
+                datalabels: {
+                    display: true,
+                    color: '#fff',
+                    anchor: 'end',
+                    align: 'end',
+                    formatter: (value) => value,
+                }
             }
         }
-    }
-});
-
-function updateChart() {
-    trafficChart.data.datasets[0].data = [
-        countData.motor, 
-        countData.mobil, 
-        countData.angkutanUmum, 
-        countData.bus, 
-        countData.pickup, 
-        countData.trukBesar
-    ];
-    trafficChart.update();
+    });
 }
 
-function animateCount(type) {
-    const counterElement = document.querySelector('.counter');
-    counterElement.classList.add('animate');
-    setTimeout(() => {
-        counterElement.classList.remove('animate');
-    }, 500);
-}
-
+// Fungsi untuk mengekspor ke Excel
 function exportToExcel() {
+    const worksheet = XLSX.utils.json_to_sheet([
+        { Kendaraan: 'Motor', Jumlah: counts.motor },
+        { Kendaraan: 'Mobil', Jumlah: counts.mobil },
+        { Kendaraan: 'Angkutan Umum', Jumlah: counts.angkutanUmum },
+        { Kendaraan: 'Bus', Jumlah: counts.bus },
+        { Kendaraan: 'Pickup', Jumlah: counts.pickup },
+        { Kendaraan: 'Truk Besar', Jumlah: counts.trukBesar },
+    ]);
     const workbook = XLSX.utils.book_new();
-    const worksheetData = [
-        ["Jenis Kendaraan", "Jumlah"],
-        ["Motor", countData.motor],
-        ["Mobil", countData.mobil],
-        ["Angkutan Umum", countData.angkutanUmum],
-        ["Bus", countData.bus],
-        ["Pickup", countData.pickup],
-        ["Truk Besar", countData.trukBesar],
-    ];
-
-    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Traffic Count");
-
-    XLSX.writeFile(workbook, "Traffic_Count.xlsx");
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Data Kendaraan');
+    XLSX.writeFile(workbook, 'data_kendaraan.xlsx');
 }
 
+// Fungsi untuk mengekspor grafik ke PNG
 function exportChartToPNG() {
+    const canvas = document.getElementById('trafficChart');
     const link = document.createElement('a');
-    link.href = trafficChart.toBase64Image();
-    link.download = 'Traffic_Chart.png';
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'chart.png';
     link.click();
 }
+
+// Fungsi untuk memainkan suara burung
 function playBirdSound() {
     var sound = document.getElementById("birdSound");
     sound.currentTime = 0; // Mulai dari awal
     sound.play(); // Mainkan suara
 }
 
-
+// Fungsi untuk menangani klik kendaraan
+function incrementMotor() { incrementCount('motor'); }
+function incrementMobil() { incrementCount('mobil'); }
+function incrementAngkutanUmum() { incrementCount('angkutanUmum'); }
+function incrementBus() { incrementCount('bus'); }
+function incrementPickup() { incrementCount('pickup'); }
+function incrementTrukBesar() { incrementCount('trukBesar'); }
