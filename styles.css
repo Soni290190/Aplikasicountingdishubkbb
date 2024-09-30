@@ -1,55 +1,30 @@
 body {
-    background-color: #f5f5f5;
     font-family: Arial, sans-serif;
-    color: #333;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
 }
 
-.header {
-    background-color: #002f6c;
-    color: #fff;
-    padding: 20px;
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
     text-align: center;
 }
 
-.logo {
-    max-width: 200px; /* Atur lebar maksimum logo */
-    height: auto; /* Menjaga rasio aspek */
-    display: block; /* Membuat logo sebagai block element */
-    margin: 0 auto; /* Mengatur margin otomatis untuk center */
-}
-
-
-.container {
-    margin: 20px;
-}
-
-.counter-buttons {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-
-.btn {
-    padding: 15px 30px;
-    font-size: 18px;
-    margin: 10px;
-    cursor: pointer;
-    background-color: #ffc107;
-    color: #fff;
+button {
+    margin: 5px;
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
     border: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
 }
 
-.btn:hover {
-    transform: scale(1.1);
-    background-color: #007bff; /* Ganti warna saat hover */
+button:hover {
+    background-color: #218838;
 }
 
-.chart-container {
-    margin-top: 40px;
-}
-
-.counter {
-    transition: all 0.5s ease-in-out; /* Animasi saat menghitung */
+canvas {
+    margin-top: 20px;
 }
