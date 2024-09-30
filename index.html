@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Counting</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Traffic Counting KBB</h1>
+    </div>
+    <div class="container">
+        <div class="counter-buttons">
+            <button class="btn" onclick="incrementCount('motor')">Motor</button>
+            <button class="btn" onclick="incrementCount('mobil')">Mobil</button>
+            <button class="btn" onclick="incrementCount('angkutanUmum')">Angkutan Umum</button>
+            <button class="btn" onclick="incrementCount('bus')">Bus</button>
+            <button class="btn" onclick="incrementCount('pickup')">Pickup</button>
+            <button class="btn" onclick="incrementCount('trukBesar')">Truk Besar</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="trafficChart"></canvas>
+        </div>
+        <button class="btn" onclick="exportToExcel()">Export to Excel</button>
+        <button class="btn" onclick="exportChartToPNG()">Export Chart to PNG</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
