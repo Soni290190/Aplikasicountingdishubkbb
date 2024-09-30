@@ -16,7 +16,7 @@ const debounceTime = 300; // waktu dalam milidetik
 function incrementCount(type) {
     const currentTime = Date.now();
     if (currentTime - lastClickTime >= debounceTime) {
-        counts[type]++; // Meningkatkan jumlah kendaraan
+        counts[type]++;
         lastClickTime = currentTime; // update waktu klik terakhir
         updateChart(); // Memperbarui grafik setelah menghitung
     }
