@@ -3,34 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Counting App</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <title>Traffic Counting</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .header {
+            background-color: #002f6c;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            margin: 20px;
+        }
+        .counter-buttons {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #ffc107;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+        .chart-container {
+            margin-top: 40px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Traffic Counting App</h1>
-        <img src="logo.png" alt="Logo" id="logo" onclick="playBirdSound()">
-    </header>
-    
-    <main>
-        <button onclick="incrementCount('motor')">Motor</button>
-        <button onclick="incrementCount('mobil')">Mobil</button>
-        <button onclick="incrementCount('angkutanUmum')">Angkutan Umum</button>
-        <button onclick="incrementCount('bus')">Bus</button>
-        <button onclick="incrementCount('pickup')">Pickup</button>
-        <button onclick="incrementCount('trukBesar')">Truk Besar</button>
+    <div class="header">
+        <h1>Traffic Counting KBB</h1>
+    </div>
+    <div class="container">
+        <div class="counter-buttons">
+            <button class="btn" onclick="incrementCount('motor')">Motor</button>
+            <button class="btn" onclick="incrementCount('mobil')">Mobil</button>
+            <button class="btn" onclick="incrementCount('angkutanUmum')">Angkutan Umum</button>
+            <button class="btn" onclick="incrementCount('bus')">Bus</button>
+            <button class="btn" onclick="incrementCount('pickup')">Pickup</button>
+            <button class="btn" onclick="incrementCount('trukBesar')">Truk Besar</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="trafficChart"></canvas>
+        </div>
+        <button class="btn" onclick="exportToExcel()">Export to Excel</button>
+        <button class="btn" onclick="exportChartToPNG()">Export Chart to PNG</button>
+    </div>
 
-        <canvas id="trafficChart" width="400" height="200"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let countData = {
+            motor: 0,
+            mobil: 0,
+            angkutanUmum: 0,
+            bus: 0,
+            pickup: 0,
+            trukBesar: 0
+        };
 
-        <button onclick="exportToExcel()">Export to Excel</button>
-        <button onclick="exportChartAsPNG()">Export Chart as PNG</button>
-    </main>
+        let lastClicked = 0;
 
-    <audio id="birdSound" src="bird-sound.mp3" preload="auto"></audio>
-    
-    <script src="script.js"></script>
+        function incrementCount(type) {
+            const now = Date.now();
+            if (now - lastClicked < 300) { // 300 ms delay
+                return; // Jangan lakukan apa-apa jika diklik terlalu cepat
+            }
+            lastClicked = now;
+
+            countData[type]++;
+            updateChart();
+        }
+
+        const ctx = document.getElementById('trafficChart').getContext('2d');
+        const trafficChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Motor', 'Mobil', 'Angkutan Umum', 'Bus', 'Pickup', 'Truk Besar'],
+                datasets: [{
+                    label: 'Jumlah Kendaraan',
+                    data: [
+                        countData.motor, 
+                        countData.mobil, 
+                        countData.angkutanUmum, 
+                        countData.bus, 
+                        countData.pickup, 
+                        countData.trukBesar
+                    ],
+                    backgroundColor: [
+                        '#ffc107', '#007bff', '#28a745', '#dc3545', '#17a2b8', '#6c757d'
+                    ],
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function updateChart() {
+            trafficChart.data.datasets[0].data = [
+                countData.motor, 
+                countData.mobil, 
+                countData.angkutanUmum, 
+                countData.bus, 
+                countData.pickup, 
+                countData.trukBesar
+            ];
+            trafficChart.update();
+        }
+
+        function exportToExcel() {
+            const workbook = XLSX.utils.book_new();
+            const worksheetData = [
+                ["Jenis Kendaraan", "Jumlah"],
+                ["Motor", countData.motor],
+                ["Mobil", countData.mobil],
+                ["Angkutan Umum", countData.angkutanUmum],
+                ["Bus", countData.bus],
+                ["Pickup", countData.pickup],
+                ["Truk Besar", countData.trukBesar],
+            ];
+
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Traffic Count");
+
+            XLSX.writeFile(workbook, "Traffic_Count.xlsx");
+        }
+
+        function exportChartToPNG() {
+            const link = document.createElement('a');
+            link.href = trafficChart.toBase64Image();
+            link.download = 'Traffic_Chart.png';
+            link.click();
+        }
+    </script>
 </body>
 </html>
