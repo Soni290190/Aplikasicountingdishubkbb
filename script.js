@@ -108,3 +108,10 @@ function exportChartToPNG() {
     link.download = 'Traffic_Chart.png';
     link.click();
 }
+function playBirdSound() {
+    var sound = document.getElementById("birdSound");
+    sound.currentTime = 0; // Mulai dari awal
+    sound.play(); // Mainkan suara
+}
+
+
