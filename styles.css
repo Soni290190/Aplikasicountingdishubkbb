@@ -11,6 +11,14 @@ body {
     text-align: center;
 }
 
+.logo {
+    max-width: 200px; /* Atur lebar maksimum logo */
+    height: auto; /* Menjaga rasio aspek */
+    display: block; /* Membuat logo sebagai block element */
+    margin: 0 auto; /* Mengatur margin otomatis untuk center */
+}
+
+
 .container {
     margin: 20px;
 }
